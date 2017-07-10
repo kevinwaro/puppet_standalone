@@ -10,7 +10,7 @@ I'm using it when I want to write new puppet cookbooks before to deploy them in 
 
 First clone the git repo:
 
-    git clone REPO && cd REPO
+    git clone https://github.com/kevinwaro/puppet_standalone.git && cd puppet_standalone
 
 Then let Vagrant play the music:
 
@@ -27,7 +27,6 @@ You can force it by running the following commands on the client:
     
      vagrant ssh client
      sudo /opt/puppetlabs/puppet/bin/puppet agent -t
-
      
 ## Credits:
 
