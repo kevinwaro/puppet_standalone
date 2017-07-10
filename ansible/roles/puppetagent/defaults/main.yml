@@ -1,0 +1,9 @@
+---
+java_mem_start: 512m
+java_mem_max: 512m
+puppet_server_certname: puppetmaster01.local
+puppet_server_name: puppetmaster01.local
+puppet_server_ip: 192.168.200.10
+puppet_agent_certname: agent01.local
+puppet_agent_name: agent01.local
+environment: production
