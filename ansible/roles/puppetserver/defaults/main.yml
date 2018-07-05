@@ -3,4 +3,4 @@ java_mem_start: 512m
 java_mem_max: 512m
 puppet_server_certname: puppetmaster01.local
 puppet_server_name: puppetmaster01.local
-environment: production
+puppet_environment: production

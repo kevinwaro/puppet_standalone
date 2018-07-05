@@ -6,4 +6,4 @@ puppet_server_name: puppetmaster01.local
 puppet_server_ip: 192.168.200.10
 puppet_agent_certname: agent01.local
 puppet_agent_name: agent01.local
-environment: production
+puppet_environment: production
