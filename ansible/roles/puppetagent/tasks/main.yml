@@ -1,11 +1,11 @@
 ---
 - name: "Dowload the puppetlabs-release-pc1 deb package"
   get_url:
-      url: https://apt.puppetlabs.com/puppetlabs-release-pc1-jessie.deb
-      dest: /tmp/puppetlabs-release-pc1-jessie.deb
+      url: "https://apt.puppetlabs.com/puppetlabs-release-pc1-{{ ansible_distribution_release }}.deb"
+      dest: "/tmp/puppetlabs-release-pc1-{{ ansible_distribution_release }}.deb"
 
 - name: "Install the puppet repos"
-  command: dpkg -i puppetlabs-release-pc1-jessie.deb
+  command: "dpkg -i puppetlabs-release-pc1-{{ ansible_distribution_release }}.deb"
   args:
       chdir: /tmp/
 
