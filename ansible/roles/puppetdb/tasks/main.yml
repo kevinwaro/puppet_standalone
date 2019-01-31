@@ -1,0 +1,131 @@
+---
+- name: "Add postgresql gpg key"
+  apt_key:
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: "Add postgresql apt repository" 
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt stretch-pgdg main
+    state: present
+    filename: postgresql.list
+
+- name: "Update apt cache"
+  apt:
+    update_cache: yes
+    
+- name: "Install postgres-9.6"
+  apt:
+      name: "{{ item }}"
+      state: present
+  with_items:
+      - postgresql-9.6  
+      - postgresql-contrib-9.6
+      - libpq-dev
+      - python-psycopg2
+
+- name: "Set postgresql authentication by password" 
+  lineinfile:
+      path: /etc/postgresql/9.6/main/pg_hba.conf
+      regexp: '^local   all             postgres                                peer'
+      line: 'local   all             postgres                                md5'
+
+- name: "Update postgresql password"
+  command: sudo -u postgres psql -c "ALTER USER postgres PASSWORD '{{ postgres_admin_password }}';"
+
+- name: "Start postgresql service"
+  service:
+      name: postgresql
+      state: restarted
+      enabled: yes
+
+- name: "Create puppetdb db"
+  postgresql_db:
+      login_user: postgres
+      login_password: postgres
+      login_host: 127.0.0.1
+      name: puppetdb
+      encoding: UTF-8
+
+- name: "Create puppetdb user"
+  postgresql_user:
+      login_user: postgres
+      login_password: "{{ postgres_admin_password }}"
+      login_host: 127.0.0.1
+      db: puppetdb
+      name: "{{ postgres_puppetdb_user }}"
+      password: "{{ postgres_puppetdb_password }}"
+
+- name: "Install puppetdb package"
+  apt:
+      name: puppetdb
+      state: present
+
+- name: "Install puppetdb module"
+  command: /opt/puppetlabs/bin/puppet module install puppetlabs-puppetdb
+
+- name: "Install puppetdb-terminus module"
+  command: /opt/puppetlabs/bin/puppet resource package puppetdb-termini ensure=latest
+
+- name: "Start puppetdb module"
+  command: /opt/puppetlabs/bin/puppet resource service puppetdb ensure=running enable=true
+
+- name: "Set puppetdb.conf"
+  template: 
+      src: puppetdb.conf.j2
+      dest: /etc/puppetlabs/puppet/puppetdb.conf
+      backup: true
+
+- name: "Set database.ini"
+  template: 
+      src: database.ini.j2
+      dest: /etc/puppetlabs/puppetdb/conf.d/database.ini
+      backup: true
+
+- name: "Set jetty.ini"
+  copy: 
+      src: jetty.ini
+      dest: /etc/puppetlabs/puppetdb/conf.d/jetty.ini
+
+- name: "Set routes.yaml"
+  copy:
+      src: routes.yml
+      dest: /etc/puppetlabs/puppet/routes.yml
+
+- name: "Edit puppet.conf"
+  lineinfile:
+      path: /etc/puppetlabs/puppet/puppet.conf
+      insertafter:
+      line: 'storeconfigs = true'
+
+- name: "Edit puppet.conf"
+  lineinfile:
+      path: /etc/puppetlabs/puppet/puppet.conf
+      insertafter: '^storeconfigs = true'
+      line: 'storeconfigs_backend = puppetdb'
+
+- name: "Edit puppet.conf"
+  lineinfile:
+      path: /etc/puppetlabs/puppet/puppet.conf
+      insertafter: '^storeconfigs_backend = puppetdb'
+      line: 'reports = store,puppetdb'
+
+- name: "Ensure good rights are set in puppetdb folder"
+  file:
+      path: /etc/puppetlabs/puppetdb
+      owner: puppetdb
+      group: puppetdb
+      recurse: true
+
+- name: "Ensure good rights are set in puppet folder"
+  file:
+      path: /etc/puppetlabs/puppet
+      owner: puppet
+      group: puppet
+      recurse: true
+
+- name: "Start puppetdb service"
+  service:
+      name: puppetdb
+      state: restarted
+      enabled: yes
