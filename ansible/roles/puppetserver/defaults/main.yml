@@ -1,6 +1,7 @@
 ---
 java_mem_start: 512m
 java_mem_max: 512m
-puppet_server_certname: puppetmaster01.local
-puppet_server_name: puppetmaster01.local
+puppet_server_certname: puppetserver
+puppet_server_name: puppetserver
+puppet_server_ip: "{{ ansible_eth1.ipv4.address_}}"
 puppet_environment: production

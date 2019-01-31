@@ -1,11 +1,11 @@
 ---
 - name: "Dowload the puppetlabs-release-pc1 deb package"
   get_url:
-      url: https://apt.puppetlabs.com/puppetlabs-release-pc1-jessie.deb
-      dest: /tmp/puppetlabs-release-pc1-jessie.deb
+      url: "https://apt.puppetlabs.com/puppet6-release-{{ ansible_distribution_release }}.deb"
+      dest: "/tmp/puppet6-release-{{ ansible_distribution_release }}.deb"
 
 - name: "Install the puppet repos"
-  command: dpkg -i puppetlabs-release-pc1-jessie.deb
+  command: "dpkg -i puppet6-release-{{ ansible_distribution_release }}.deb"
   args:
       chdir: /tmp/
 
@@ -24,6 +24,21 @@
   template:
       src: puppet.conf.j2
       dest: /etc/puppetlabs/puppet/puppet.conf
+
+- name: "Update hosts file"
+  lineinfile:
+      dest: /etc/hosts
+      line: "{{  puppet_server_ip }} {{  puppet_server_name }}"
+
+- name: "Ensure good rights are set in puppet folder"
+  file:
+      path: "/etc/puppetlabs/{{ item }}"
+      owner: puppet
+      group: puppet
+      recurse: true
+  with_items:
+      - puppet
+      - puppetserver
 
 - name: "Enable and restart puppet service"
   service:
