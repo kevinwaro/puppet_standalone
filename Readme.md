@@ -19,14 +19,14 @@ Then let Vagrant play the music:
 Once Vagrant has been ran. You will need to login to the puppet server in order to accept the puppet agent's signing request.
 
     vagrant ssh puppetserver
-    sudo /opt/puppetlabs/puppet/bin/puppet cert sign --all
+    sudo /opt/puppetlabs/bin/puppetserver ca sign --all
     
 You can now start to write new cookbooks and they will be applied on the agent(s).
 
 You can force it by running the following commands on the client:
     
      vagrant ssh client
-     sudo /opt/puppetlabs/puppet/bin/puppet agent -t
+     sudo /opt/puppetlabs/bin/puppet agent -t
      
 ## Credits:
 
