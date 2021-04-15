@@ -1,4 +1,5 @@
 ---
+postgres_version: 12
 postgres_admin_password: postgres
 postgres_puppetdb_user: puppetdb
 postgres_puppetdb_password: puppetdb
