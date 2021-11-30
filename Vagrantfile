@@ -6,8 +6,8 @@ Vagrant.configure(2) do |config|
    puppetserver.vm.network "private_network", ip: "192.168.200.10"
    puppetserver.vm.hostname = "puppetserver"
    puppetserver.vm.provider "virtualbox" do |vb|
-     vb.memory = "1024"
-     vb.cpus = 1
+     vb.memory = "3072"
+     vb.cpus = 2
    end
    puppetserver.vm.provision "ansible/puppetserver", type: "ansible" do |ansible|
      ansible.playbook = "ansible/puppet_server.yml"
@@ -22,12 +22,12 @@ Vagrant.configure(2) do |config|
  end
 
  config.vm.define "client" do |client|
-   client.vm.box ="debian/buster64" 
+   client.vm.box ="debian/bullseye64" 
    client.vm.network "private_network", ip: "192.168.200.11"
    client.vm.hostname = "client"
    client.vm.provider "virtualbox" do |vb|
-     vb.memory = "512"
-     vb.cpus = 1
+     vb.memory = "1024"
+     vb.cpus = 2
    end
    client.vm.provision "ansible/client", type: "ansible" do |ansible|
      ansible.playbook = "ansible/puppet_agent.yml"
